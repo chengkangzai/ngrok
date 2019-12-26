@@ -2,7 +2,8 @@
 
 function StartNgrok {
     $process=Get-Process -Name ngrok -ErrorAction SilentlyContinue
-    if ($process -ne "") {
+    if ($process -eq "") {
+        Write-Host "Initiate NGROK now"
         Start-Process .\ngrok.exe "tcp 3389 -region=ap" -WindowStyle Hidden  
         $port = Get-NgrokPort 
         Send-Discord -port $port 
@@ -24,7 +25,7 @@ function StartNgrok {
             Send-Discord -port $port -Heartbeat 1
             Send-Email -port $port -Heartbeat 1
         } else {
-            Write-Host "Avoid Spamming"
+            Write-Host "You are not in Spamming Zone, Notify canceled"
         }
     }
     
@@ -34,7 +35,12 @@ $stat = $true
 while($stat){
 	if(Test-Connection www.google.com -Quiet){
         $stat = $false
-        Write-Host "Network Connection detected! Proceed to start ngrok"
+        $process=Get-Process -Name ngrok -ErrorAction SilentlyContinue
+        if ($process -eq "") {
+            Write-Host "Network Connection detected! Proceed to start ngrok"    
+        }else {
+            Write-Host "Network Connection detected! Proceed to notify"    
+        }
         StartNgrok
 	} else {
         Write-Host "No Network! what the heck!?"

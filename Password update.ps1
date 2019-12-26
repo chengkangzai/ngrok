@@ -8,8 +8,7 @@ function CreateEmailCredential {
         Set-Content $path $secureStringText    
     }
 }
-
-$password = "Your Frikin Password"
+$password = Read-Host 'What is your password?' -AsSecureString
 $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
 $secureStringText = $secureStringPwd | ConvertFrom-SecureString 
 CreateEmailCredential
