@@ -13,14 +13,16 @@ function Send-Email {
     )
     if ($Heartbeat -eq 0) {
         $heading="Heart Beat! "
+        $status="$pcname heart beat at $currentTimestamp"
     } else {
         $heading="Restart! "
-        $status="<p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>$pcname restarted at $currentTimestamp</p>"
+        $status="$pcname restarted at $currentTimestamp"
     }
+    Write-Host "The type of notify is $heading"
        
     $currentTimestamp = Get-Date -Format g
     $username = "cheng.kang@cloudmails.apu.edu.my"
-    $pwdTxt = Get-Content "C:\ngrok\email.cred"
+    $pwdTxt = Get-Content ".\email.cred"
     $securePwd = $pwdTxt | ConvertTo-SecureString 
     $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securePwd
 
@@ -34,7 +36,6 @@ function Send-Email {
     Write-Host "Send from : $From "
     Write-Host "Send to : $To"
     Write-Host "Current Time : $currentTimestamp"
-    Write-Host "The type of notify is $heading"
     $Body = "<html>
     
 <head>
@@ -122,7 +123,7 @@ function Send-Email {
                                     <tr>
                                         <td style='font-family: sans-serif; font-size: 14px; vertical-align: top;'>
                                             <p style='font-family: sans-serif; font-size: 20px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>Hello,</p>
-                                            $status
+                                            <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>$status</p>
                                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>The ngrok port for this pc is :<br>$port</p>
                                         </td>
                                     </tr>
