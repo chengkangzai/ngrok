@@ -18,6 +18,7 @@ function Send-Email {
         $heading="Restart! "
         $status="$pcname restarted at $currentTimestamp"
     }
+    Write-Host "--------------------- Send Email ------------------------------"
     Write-Host "The type of notify is $heading"
        
     $currentTimestamp = Get-Date -Format g
@@ -31,7 +32,7 @@ function Send-Email {
     $To = "pycck@hotmail.com"
     $Subject = " $pcname ngrok port update"
 
-    Write-Host "---------------------------------------------------"
+    
     Write-Host "Preparing Email "
     Write-Host "Send from : $From "
     Write-Host "Send to : $To"

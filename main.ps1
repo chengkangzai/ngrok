@@ -1,7 +1,7 @@
 ﻿Import-Module ".\core.psm1" -DisableNameChecking
 
 function StartNgrok {
-    $process=Get-Process -Name ngrok
+    $process=Get-Process -Name ngrok -ErrorAction SilentlyContinue
     if ($process -ne "") {
         Start-Process C:\ngrok\ngrok.exe "tcp 3389 -region=ap" -WindowStyle Hidden  
         $port = Get-NgrokPort 
