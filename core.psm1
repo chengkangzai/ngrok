@@ -1,5 +1,5 @@
 $pcname=HOSTNAME.EXE
-
+#$pcname=$pcname.ToUpper()
 function Send-Email {
     [CmdletBinding()]
     param (
