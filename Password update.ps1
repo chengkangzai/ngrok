@@ -9,7 +9,7 @@
     }
 }
 
-$password = "No.PASSword"
+$password = ""
 $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force 
 $secureStringText = $secureStringPwd | ConvertFrom-SecureString 
 CreateEmailCredential
