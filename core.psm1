@@ -183,7 +183,7 @@ function Send-Discord {
     }   
     
 }
-function clear-cache {
+function Clear-cache {
     Remove-Variable * -ea SilentlyContinue
     Remove-Module *
     $error.Clear()
