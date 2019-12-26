@@ -13,3 +13,5 @@ $secureStringPwd = $password | ConvertTo-SecureString -AsPlainText -Force
 $secureStringText = $secureStringPwd | ConvertFrom-SecureString 
 CreateEmailCredential
 
+#Reference https://blog.kloud.com.au/2016/04/21/using-saved-credentials-securely-in-powershell-scripts/
+
