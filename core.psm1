@@ -1,5 +1,6 @@
 $pcname=HOSTNAME.EXE
 #$pcname=$pcname.ToUpper()
+
 function Send-Email {
     [CmdletBinding()]
     param (
@@ -21,15 +22,18 @@ function Send-Email {
     Write-Host "--------------------- Send Email ------------------------------"
     Write-Host "The type of notify is $heading"
        
+    $config=Get-Content .\setup.json | ConvertFrom-Json
+
+
     $currentTimestamp = Get-Date -Format g
-    $username = "cheng.kang@cloudmails.apu.edu.my"
+    $username = $config.From
     $pwdTxt = Get-Content ".\email.cred"
     $securePwd = $pwdTxt | ConvertTo-SecureString 
     $cred = New-Object System.Management.Automation.PSCredential -ArgumentList $username, $securePwd
 
     
-    $From = "cheng.kang@cloudmails.apu.edu.my"
-    $To = "pycck@hotmail.com"
+    $From = $config.From
+    $To = $config.To
     $Subject = " $pcname ngrok port update"
 
     
@@ -140,8 +144,8 @@ function Send-Email {
 </body>
 
 </html>"
-    $SMTPServer = "smtp.office365.com"
-    $SMTPPort = "587"
+    $SMTPServer = $config.SMTPServer
+    $SMTPPort = $config.SMTPPort
 
     Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -BodyAsHtml -SmtpServer $SMTPServer -port $SMTPPort -UseSsl -Credential $cred -DeliveryNotificationOption OnFailure
      
@@ -206,4 +210,15 @@ function Get-NgrokPort {
             Start-Sleep 10
         }
     }    
+}
+
+function Send-Heartbeat {
+    $port = Get-NgrokPort 
+    Send-Discord -port $port -Heartbeat 0
+    Send-Email -port $port -Heartbeat 0
+}
+function Send-Restart {
+    $port = Get-NgrokPort 
+    Send-Discord -port $port 1
+    Send-Email -port $port 1
 }
