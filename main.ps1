@@ -1,13 +1,15 @@
-﻿Import-Module ".\core.psm1" -DisableNameChecking
+﻿Set-Location C:\ngrok
+Import-Module ".\core.psm1" -DisableNameChecking
 
 function StartNgrok {
-    $process = Get-Process -Name ngrok -ErrorAction SilentlyContinue
-    if ($process -eq "") {
+    Write-Host "Running "
+    $process = (Get-Process -Name ngrok -ErrorAction SilentlyContinue).Count
+    if ($process -eq 0) {
         Write-Host "Initiate NGROK now"
         Start-Process .\ngrok.exe "tcp 3389 -region=ap" -WindowStyle Hidden  
         Send-Restart
     }
-    elseif ($process -notlike "") {
+    elseif ($process -ne 0) {
         <#
         #Use this if you dont want to be notify at night
         $start = Get-Date -Hour 07 -Minute 00 -Second 0
@@ -26,6 +28,8 @@ function StartNgrok {
         $start1 = Get-Date -Hour 00 -Minute 0 -Second 0
         $end1 = Get-Date -Hour 00 -Minute 30 -Second 0
         $now = Get-Date
+        Write-Host "Checking If is spamming zone"
+        
         if ($now -ge $start -and $now -le $end ) {
             Write-Host "It's in Spamming Area... Spamming Started"
             Send-Heartbeat
@@ -33,10 +37,14 @@ function StartNgrok {
         elseif ($now -ge $start1 -and $now -le $end1) {
             Write-Host "It's in Spamming Area... Spamming Started"
             Send-Heartbeat
+        }else{
+            Write-Host "Well still spamming anyways :3"
+            Send-Heartbeat
         }
-        else {
-            Write-Host "You are not in Spamming Zone, Notify canceled"
-        }
+        
+    }else {
+        Write-Host "You are not in Spamming Zone, Notify canceled"
+        Send-Heartbeat
     }
 }    
 
@@ -51,13 +59,13 @@ while ($stat) {
         }
         else {
             Write-Host "Network Connection detected! Proceed to notify"    
+            StartNgrok
         }
-        StartNgrok    
+         
     }
     else {
         Write-Host "No Network! what the heck!?"
         Start-Sleep 10
     }
 }
-
 

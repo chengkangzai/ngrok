@@ -5,6 +5,7 @@ function CreateEmailCredential {
         [String]
         $secureStringText
     )
+    Set-Location C:\ngrok
     $path = ".\email.cred"
     if (Test-Path $path -PathType Leaf) {
         Set-Content $path $secureStringText    
@@ -19,4 +20,3 @@ $secureStringText = $password | ConvertFrom-SecureString
 CreateEmailCredential -secureStringText $secureStringText
 
 #Reference https://blog.kloud.com.au/2016/04/21/using-saved-credentials-securely-in-powershell-scripts/
-
