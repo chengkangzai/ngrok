@@ -1,5 +1,5 @@
 $pcname=HOSTNAME.EXE
-#$pcname=$pcname.ToUpper()
+$pcname=$pcname.ToUpper()
 
 function Send-Email {
     [CmdletBinding()]
@@ -22,6 +22,7 @@ function Send-Email {
     Write-Host "--------------------- Send Email ------------------------------"
     Write-Host "The type of notify is $heading"
        
+    Set-Location C:\ngrok\
     $config=Get-Content .\setup.json | ConvertFrom-Json
 
 
@@ -151,7 +152,6 @@ function Send-Email {
      
     Write-Host "Email is sent"
 }
-
 function Send-Discord {
     [CmdletBinding()]
     param (
@@ -193,7 +193,6 @@ function Clear-cache {
     $error.Clear()
     Clear-Host
 }
-
 function Get-NgrokPort {
     $stat = $true
     while($stat){
@@ -211,7 +210,6 @@ function Get-NgrokPort {
         }
     }    
 }
-
 function Send-Heartbeat {
     $port = Get-NgrokPort 
     Send-Discord -port $port -Heartbeat 0
