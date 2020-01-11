@@ -2,7 +2,7 @@
 Import-Module ".\core.psm1" -DisableNameChecking
 
 function StartNgrok {
-    Write-Host "Running "
+    Write-Host "ngrok is running Running "
     $process = (Get-Process -Name ngrok -ErrorAction SilentlyContinue).Count
     if ($process -eq 0) {
         Write-Host "Initiate NGROK now"
@@ -38,7 +38,7 @@ function StartNgrok {
             Write-Host "It's in Spamming Area... Spamming Started"
             Send-Heartbeat
         }else{
-            Write-Host "Well still spamming anyways :3"
+            Write-Host "You are not in spamming Zone"
             Send-Heartbeat
         }
         
@@ -54,12 +54,13 @@ while ($stat) {
     if (Test-Connection www.google.com -Quiet) {
         $stat = $false
         $process = Get-Process -Name ngrok -ErrorAction SilentlyContinue
+
         if ($process -eq "") {
             Write-Host "Network Connection detected! Proceed to start ngrok"
+            StartNgrok
         }
         else {
-            Write-Host "Network Connection detected! Proceed to notify"    
-            StartNgrok
+            Write-Host "Network Connection detected! Proceed to notify"
         }
          
     }
@@ -68,4 +69,3 @@ while ($stat) {
         Start-Sleep 10
     }
 }
-

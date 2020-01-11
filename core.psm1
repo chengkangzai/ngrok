@@ -1,5 +1,5 @@
-$pcname=HOSTNAME.EXE
-$pcname=$pcname.ToUpper()
+$pcname = HOSTNAME.EXE
+$pcname = $pcname.ToUpper()
 
 function Send-Email {
     [CmdletBinding()]
@@ -13,17 +13,17 @@ function Send-Email {
         $port
     )
     if ($Heartbeat -eq 0) {
-        $heading="Heart Beat! "
-        $status="$pcname heart beat at $currentTimestamp"
-    } else {
-        $heading="Restart! "
-        $status="$pcname restarted at $currentTimestamp"
+        $heading = "Heart Beat! "
+        $status = "$pcname heart beat at $currentTimestamp"
+    }
+    else {
+        $heading = "Restart! "
+        $status = "$pcname restarted at $currentTimestamp"
     }
     Write-Host "--------------------- Send Email ------------------------------"
     Write-Host "The type of notify is $heading"
-       
     Set-Location C:\ngrok\
-    $config=Get-Content .\setup.json | ConvertFrom-Json
+    $config = Get-Content .\setup.json | ConvertFrom-Json
 
 
     $currentTimestamp = Get-Date -Format g
@@ -149,7 +149,6 @@ function Send-Email {
     $SMTPPort = $config.SMTPPort
 
     Send-MailMessage -From $From -to $To -Subject $Subject -Body $Body -BodyAsHtml -SmtpServer $SMTPServer -port $SMTPPort -UseSsl -Credential $cred -DeliveryNotificationOption OnFailure
-     
     Write-Host "Email is sent"
 }
 function Send-Discord {
@@ -166,23 +165,25 @@ function Send-Discord {
     Write-Host "---------------Discord------------------------------"
     Write-Host "initialize Discord Webhook"
     if ($Heartbeat -eq 0) {
-       $Heartbeatinfo = "Heart Beat" 
-    }else {
+        $Heartbeatinfo = "Heart Beat" 
+    }
+    else {
         $Heartbeatinfo = "Restart" 
     }
     Write-Host "Current Type of notify : $Heartbeatinfo "
-    $DiscordUrl ="https://discordapp.com/api/webhooks/658902215020511252/lWyRtM0P7gb3HviVP1aXNPaDQTw7rE1mBDEdpCOEuBA_SJm9sQMiMYPQerdBVCyEAild"
+    $DiscordUrl = "https://discordapp.com/api/webhooks/658902215020511252/lWyRtM0P7gb3HviVP1aXNPaDQTw7rE1mBDEdpCOEuBA_SJm9sQMiMYPQerdBVCyEAild"
 
-    $DiscordBody=@{
+    $DiscordBody = @{
         "content" = "[ $pcname | $Heartbeatinfo ] $port"
     }
     $message = $DiscordBody.content
     Write-Host "Sending message $message"
-    $discord=Invoke-WebRequest -Uri $DiscordUrl -Method Post -Body $DiscordBody 
-    $discordResposnse =$discord.StatusCode
+    $discord = Invoke-WebRequest -Uri $DiscordUrl -Method Post -Body $DiscordBody 
+    $discordResposnse = $discord.StatusCode
     if ($discordResposnse -eq "204") {
         Write-Host "Message send successfully "
-    }else {
+    }
+    else {
         Write-Host "Message didnt send well, here is the response $discordResposnse"
     }   
     
@@ -195,17 +196,18 @@ function Clear-cache {
 }
 function Get-NgrokPort {
     $stat = $true
-    while($stat){
+    while ($stat) {
         Write-Host "------------ Get Ngrok Port -----------------"
         Write-Host "Finding the ngrok port"
         $tunnel = Invoke-WebRequest -Uri "http://localhost:4040/api/tunnels" -UseBasicParsing | ConvertFrom-Json
         $port = $tunnel[0].tunnels.public_url
-        if($port -like "*.ngrok*"){
+        if ($port -like "*.ngrok*") {
             Write-Host "Hey! Got cha cover! We got the port already !"
             Write-Host "The ngrok port : $port "
             $stat = $false
             return $port
-        } else {
+        }
+        else {
             Start-Sleep 10
         }
     }    
@@ -217,6 +219,13 @@ function Send-Heartbeat {
 }
 function Send-Restart {
     $port = Get-NgrokPort 
-    Send-Discord -port $port 1
-    Send-Email -port $port 1
+    Send-Discord -port $port -Heartbeat 1
+    Send-Email -port $port -Heartbeat 1
 }
+
+function Send-Spam {
+    $port = Get-NgrokPort 
+    Send-Discord -port $port -Heartbeat 1     
+}
+
+    
