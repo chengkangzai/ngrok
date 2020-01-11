@@ -22,9 +22,8 @@ function Send-Email {
     }
     Write-Host "--------------------- Send Email ------------------------------"
     Write-Host "The type of notify is $heading"
-    Set-Location C:\ngrok\
     $config = Get-Content .\setup.json | ConvertFrom-Json
-
+    Set-Location $config.dirPath
 
     $currentTimestamp = Get-Date -Format g
     $username = $config.From
@@ -171,8 +170,9 @@ function Send-Discord {
         $Heartbeatinfo = "Restart" 
     }
     Write-Host "Current Type of notify : $Heartbeatinfo "
-    $DiscordUrl = "https://discordapp.com/api/webhooks/658902215020511252/lWyRtM0P7gb3HviVP1aXNPaDQTw7rE1mBDEdpCOEuBA_SJm9sQMiMYPQerdBVCyEAild"
-
+    $config = Get-Content .\setup.json | ConvertFrom-Json
+    $DiscordUrl = $config.discordWebHookUrl 
+    
     $DiscordBody = @{
         "content" = "[ $pcname | $Heartbeatinfo ] $port"
     }
@@ -227,5 +227,3 @@ function Send-Spam {
     $port = Get-NgrokPort 
     Send-Discord -port $port -Heartbeat 1     
 }
-
-    

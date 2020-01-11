@@ -1,4 +1,5 @@
-﻿Set-Location C:\ngrok
+﻿$config=Get-Content .\setup.json | ConvertFrom-Json
+Set-Location $config.dirPath
 Import-Module ".\core.psm1" -DisableNameChecking
 
 function StartNgrok {
@@ -53,16 +54,8 @@ $stat = $true
 while ($stat) {
     if (Test-Connection www.google.com -Quiet) {
         $stat = $false
-        $process = Get-Process -Name ngrok -ErrorAction SilentlyContinue
-
-        if ($process -eq "") {
             Write-Host "Network Connection detected! Proceed to start ngrok"
             StartNgrok
-        }
-        else {
-            Write-Host "Network Connection detected! Proceed to notify"
-        }
-         
     }
     else {
         Write-Host "No Network! what the heck!?"

@@ -1,4 +1,6 @@
-Set-Location C:\ngrok
+$config=Get-Content .\setup.json | ConvertFrom-Json
+Set-Location $config.dirPath
+
 Import-Module ".\core.psm1" -DisableNameChecking
 
 function StartNgrok {
@@ -12,8 +14,6 @@ function StartNgrok {
         Send-Spam
     }        
 }    
-
-
 
 $stat = $true
 while ($stat) {
