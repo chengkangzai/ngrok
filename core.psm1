@@ -4,15 +4,20 @@ $pcname = $pcname.ToUpper()
 function Send-Email {
     [CmdletBinding()]
     param (
-        [Parameter()]
+        #is it a heartbeat ? 0 = yes, 1= Restart
+        [Parameter(Mandatory=$true)]
         [bool]
         $Heartbeat,
-        # Parameter help description
-        [Parameter()]
+        #What is the tunnel port ?
+        [Parameter(Mandatory=$true)]
         [string]
-        $port
+        $port,
+        #What is the IP address in the VPN
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ipaddress
     )
-    if ($Heartbeat -eq 0) {
+    if ($Heartbeat -eq $true) {
         $heading = "Heart Beat! "
         $status = "$pcname heart beat at $currentTimestamp"
     }
@@ -130,6 +135,7 @@ function Send-Email {
                                             <p style='font-family: sans-serif; font-size: 20px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>Hello,</p>
                                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>$status</p>
                                             <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>The ngrok port for this pc is :<br>$port</p>
+                                            <p style='font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;'>The ngrok port for this pc is :<br>$ipaddress</p>
                                         </td>
                                     </tr>
                                 </table>
@@ -153,17 +159,22 @@ function Send-Email {
 function Send-Discord {
     [CmdletBinding()]
     param (
-        [Parameter()]
+        #is it a heartbeat ? 0 = yes, 1= Restart
+        [Parameter(Mandatory=$false)]
         [bool]
         $Heartbeat,
-        # Parameter help description
+        #What is the tunnel port ?
         [Parameter()]
         [string]
-        $port
+        $port,
+        #What is the IP address in the VPN
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ipaddress
     )
     Write-Host "---------------Discord------------------------------"
     Write-Host "initialize Discord Webhook"
-    if ($Heartbeat -eq 0) {
+    if ($Heartbeat -eq $true ) {
         $Heartbeatinfo = "Heart Beat" 
     }
     else {
@@ -173,9 +184,16 @@ function Send-Discord {
     $config = Get-Content .\setup.json | ConvertFrom-Json
     $DiscordUrl = $config.discordWebHookUrl 
     
-    $DiscordBody = @{
-        "content" = "[ $pcname | $Heartbeatinfo ] $port"
+    if ($ipaddress -eq "") {
+        $DiscordBody = @{
+            "content" = "[ $pcname | $Heartbeatinfo ] $port"
+        }    
+    }else {
+        $DiscordBody = @{
+            "content" = "[ $pcname | $Heartbeatinfo ] $port [ IP ] $ipaddress"
+        }  
     }
+    
     $message = $DiscordBody.content
     Write-Host "Sending message $message"
     $discord = Invoke-WebRequest -Uri $DiscordUrl -Method Post -Body $DiscordBody 
@@ -193,6 +211,12 @@ function Clear-cache {
     Remove-Module *
     $error.Clear()
     Clear-Host
+}
+
+function Get-VPNIPAddress {
+    #Getting VPN IP Address 
+    $ip=(Get-NetIPAddress -IPAddress "10.0.0*").IPAddress 
+    return $ip
 }
 function Get-NgrokPort {
     $stat = $true
@@ -214,16 +238,19 @@ function Get-NgrokPort {
 }
 function Send-Heartbeat {
     $port = Get-NgrokPort 
-    Send-Discord -port $port -Heartbeat 0
-    Send-Email -port $port -Heartbeat 0
+    $ipaddress=Get-VPNIPAddress
+    Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
+    Send-Email -port $port -Heartbeat $true -ipaddress $ipaddress
 }
 function Send-Restart {
     $port = Get-NgrokPort 
-    Send-Discord -port $port -Heartbeat 1
-    Send-Email -port $port -Heartbeat 1
+    $ipaddress = Get-VPNIPAddress
+    Send-Discord -port $port -ipaddress $ipaddress
+    Send-Email -port $port -ipaddress $ipaddress
 }
 
 function Send-Spam {
     $port = Get-NgrokPort 
-    Send-Discord -port $port -Heartbeat 1     
+    $ipaddress= Get-VPNIPAddress 
+    Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
 }
