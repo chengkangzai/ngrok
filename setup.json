@@ -4,5 +4,6 @@
     "SMTPServer": "smtp.office365.com",
     "SMTPPort": 587,
     "dirPath" :"C:\\ngrok\\",
-    "discordWebHookUrl":"https://discordapp.com/api/webhooks/658902215020511252/lWyRtM0P7gb3HviVP1aXNPaDQTw7rE1mBDEdpCOEuBA_SJm9sQMiMYPQerdBVCyEAild"
+    "discordWebHookUrl":"https://discordapp.com/api/webhooks/658902215020511252/lWyRtM0P7gb3HviVP1aXNPaDQTw7rE1mBDEdpCOEuBA_SJm9sQMiMYPQerdBVCyEAild",
+    "spamTimeInSecond":600
 }
