@@ -196,7 +196,7 @@ function Send-Discord {
     
     $message = $DiscordBody.content
     Write-Host "Sending message $message"
-    $discord = Invoke-WebRequest -Uri $DiscordUrl -Method Post -Body $DiscordBody 
+    $discord = Invoke-WebRequest -Uri $DiscordUrl -Method Post -Body $DiscordBody -UseBasicParsing
     $discordResposnse = $discord.StatusCode
     if ($discordResposnse -eq "204") {
         Write-Host "Message send successfully "
@@ -205,6 +205,58 @@ function Send-Discord {
         Write-Host "Message didnt send well, here is the response $discordResposnse"
     }   
     
+}
+function Send-Teams {
+    [CmdletBinding()]
+    param (
+        #is it a heartbeat ? 0 = yes, 1= Restart
+        [Parameter(Mandatory = $false)]
+        [bool]
+        $Heartbeat,
+        #What is the tunnel port ?
+        [Parameter()]
+        [string]
+        $port,
+        #What is the IP address in the VPN
+        [Parameter(Mandatory = $false)]
+        [string]
+        $ipaddress
+    )
+    Write-Host "---------------Teams------------------------------"
+    Write-Host "initialize Teams Webhook"
+    if ($Heartbeat -eq $true ) {
+        $Heartbeatinfo = "Heart Beat" 
+    }
+    else {
+        $Heartbeatinfo = "Restart" 
+    }
+    Write-Host "Current Type of notify : $Heartbeatinfo "
+    $config = Get-Content .\setup.json | ConvertFrom-Json
+    $teamsUrl = $config.teamsWebHookUrl 
+    
+    $teamsBody = '{
+        "@context": "https://schema.org/extensions",
+        "@type": "MessageCard",
+        "themeColor": "0072C6",
+        "title": "Visit theSnipeIT in APU",
+        "text": "Click on the button below",
+        "potentialAction": [
+        {
+            "@type": "OpenUri",
+            "name": "Open Snipe-IT",
+            "targets": [{ "os": "default", "uri": "'+$port+'" }]
+        }]
+    }'
+
+    Write-Host "Sending message $teamsmessage"
+    $teams = Invoke-WebRequest -Uri $teamsUrl -Method Post -Body $teamsBody -UseBasicParsing
+    $teamsResponse = $teams.StatusCode
+    if ($teamsResponse -eq 200) {
+        Write-Host "Message send successfully "
+    }
+    else {
+        Write-Host "Message didnt send well, here is the response $teamsResponse"
+    }   
 }
 function Clear-cache {
     Remove-Variable * -ea SilentlyContinue
@@ -225,11 +277,16 @@ function Get-NgrokPort {
         Write-Host "Finding the ngrok port"
         $tunnel = Invoke-WebRequest -Uri "http://localhost:4040/api/tunnels" -UseBasicParsing | ConvertFrom-Json
         $port = $tunnel[0].tunnels.public_url
-        if ($port -like "*.ngrok*") {
-            Write-Host "Hey! Got cha cover! We got the port already !"
+        if ($port -like "*.ngrok*" -and $port -like "tcp*") {
+            Write-Host "Hey! Got cha cover! We got the tcp tunnel already !"
             Write-Host "The ngrok port : $port "
             $stat = $false
-            return $port
+            return $port 
+        }elseif ($port -like "*.ngrok" -and $port -like"http*") {
+            Write-Host "Hey! Got cha cover! We got the http tunnel already !"
+            Write-Host "The ngrok port : $port "
+            $stat = $false
+            return $port[0] 
         }
         else {
             Start-Sleep 10
@@ -253,4 +310,5 @@ function Send-Spam {
     $port = Get-NgrokPort 
     $ipaddress= Get-VPNIPAddress 
     Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
+    Send-Teams -port $port -Heartbeat $true -ipaddress $ipaddress
 }
