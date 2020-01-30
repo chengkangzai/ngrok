@@ -5,18 +5,19 @@ function Send-Email {
     [CmdletBinding()]
     param (
         #is it a heartbeat ? 0 = yes, 1= Restart
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [bool]
         $Heartbeat,
         #What is the tunnel port ?
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]
         $port,
         #What is the IP address in the VPN
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string]
         $ipaddress
     )
+    $currentTimestamp = Get-Date -Format g
     if ($Heartbeat -eq $true) {
         $heading = "Heart Beat! "
         $status = "$pcname heart beat at $currentTimestamp"
@@ -30,7 +31,6 @@ function Send-Email {
     $config = Get-Content .\setup.json | ConvertFrom-Json
     Set-Location $config.dirPath
 
-    $currentTimestamp = Get-Date -Format g
     $username = $config.From
     $pwdTxt = Get-Content ".\email.cred"
     $securePwd = $pwdTxt | ConvertTo-SecureString 
@@ -160,7 +160,7 @@ function Send-Discord {
     [CmdletBinding()]
     param (
         #is it a heartbeat ? 0 = yes, 1= Restart
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [bool]
         $Heartbeat,
         #What is the tunnel port ?
@@ -168,7 +168,7 @@ function Send-Discord {
         [string]
         $port,
         #What is the IP address in the VPN
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [string]
         $ipaddress
     )
@@ -188,7 +188,8 @@ function Send-Discord {
         $DiscordBody = @{
             "content" = "[ $pcname | $Heartbeatinfo ] $port"
         }    
-    }else {
+    }
+    else {
         $DiscordBody = @{
             "content" = "[ $pcname | $Heartbeatinfo ] $port [ IP ] $ipaddress"
         }  
@@ -215,7 +216,7 @@ function Clear-cache {
 
 function Get-VPNIPAddress {
     #Getting VPN IP Address 
-    $ip=(Get-NetIPAddress -IPAddress "10.0.0*").IPAddress 
+    $ip = (Get-NetIPAddress -IPAddress "10.0.0*").IPAddress 
     return $ip
 }
 function Get-NgrokPort {
@@ -230,8 +231,9 @@ function Get-NgrokPort {
             Write-Host "The ngrok port : $port "
             $stat = $false
             return $port 
-        }elseif ($port -like "*.ngrok" -and $port -like"http*") {
-            $port=$port[0]
+        }
+        elseif ($port -like "*.ngrok" -and $port -like "http*") {
+            $port = $port[0]
             Write-Host "Hey! Got cha cover! We got the http tunnel already !"
             Write-Host "The ngrok port : $port "
             $stat = $false
@@ -244,7 +246,7 @@ function Get-NgrokPort {
 }
 function Send-Heartbeat {
     $port = Get-NgrokPort 
-    $ipaddress=Get-VPNIPAddress
+    $ipaddress = Get-VPNIPAddress
     Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
     Send-Email -port $port -Heartbeat $true -ipaddress $ipaddress
 }
@@ -257,6 +259,6 @@ function Send-Restart {
 
 function Send-Spam {
     $port = Get-NgrokPort 
-    $ipaddress= Get-VPNIPAddress 
+    $ipaddress = Get-VPNIPAddress 
     Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
 }
