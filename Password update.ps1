@@ -5,8 +5,10 @@ function CreateEmailCredential {
         [String]
         $secureStringText
     )
+    Set-Location C:\ngrok
     $config=Get-Content .\setup.json | ConvertFrom-Json
     Set-Location $config.dirPath
+    $path="C:\ngrok\email.cred"
     if (Test-Path $path -PathType Leaf) {
         Set-Content $path $secureStringText    
     }
