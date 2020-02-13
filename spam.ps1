@@ -1,3 +1,4 @@
+Set-Location C:\ngrok
 $config=Get-Content .\setup.json | ConvertFrom-Json
 $dir=$config.dirPath
 $sleepTime = $config.spamTimeInSecond 

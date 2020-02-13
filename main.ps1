@@ -1,4 +1,5 @@
-﻿$config=Get-Content .\setup.json | ConvertFrom-Json
+﻿Set-Location C:\ngrok
+$config=Get-Content .\setup.json | ConvertFrom-Json
 Set-Location $config.dirPath
 Import-Module ".\core.psm1" -DisableNameChecking
 
