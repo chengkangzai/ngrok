@@ -11,7 +11,10 @@ function StartNgrok {
     $process = (Get-Process -Name ngrok -ErrorAction SilentlyContinue).Count
     if ($process -eq 0) {
         Write-Host "Initiate NGROK now"
-        Start-Process .\ngrok.exe "tcp 3389 -region=ap" -WindowStyle Hidden  
+        $param ="tcp 3389 -region=ap"
+        Start-Process .\ngrok.exe $param -WindowStyle Hidden  
+        Start-Sleep 30
+        Write-Host "Initializing NGROK with param $param "
         Send-Restart
     }else{
         Write-Host "Ngrok is started"
