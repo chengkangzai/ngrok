@@ -20,6 +20,5 @@ function CreateEmailCredential {
 $password = Read-Host 'What is your password?' -AsSecureString
 $secureStringText = $password | ConvertFrom-SecureString 
 CreateEmailCredential -secureStringText $secureStringText
-
-pause ;
+Pause 
 #Reference https://blog.kloud.com.au/2016/04/21/using-saved-credentials-securely-in-powershell-scripts/
