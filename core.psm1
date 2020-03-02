@@ -244,6 +244,48 @@ function Get-NgrokPort {
         }
     }    
 }
+
+function Send-WebServer {
+    [CmdletBinding()]
+    param (
+        #What is the tunnel port ?
+        [Parameter()]
+        [string]
+        $port,
+        #What is the IP address in the VPN
+        [Parameter(Mandatory = $false)]
+        [string]
+        $ipaddress
+    )
+    Write-Host "----------------Sending to Web Server-------------------------"
+    if ($port -like "tcp*") {
+        $mode = "tcp";
+    }elseif($port -like "http*"){
+        $mode ="http";
+    }
+
+    if ($ipaddress -eq $null ) {
+        $postParams = @{
+            ngrok = $port;
+            vpnIP = 'NULL';
+            protocol = $mode;
+            pcName= $pcname;
+        }
+    }
+    else {
+        $postParams = @{
+            ngrok = $port;
+            vpnIP = $ipaddress;
+            protocol = $mode;
+            pcName= $pcname;
+        }
+    }
+    
+    $return = Invoke-WebRequest -Uri http://chengkang.synology.me/test/ngrok/receiver.php -Method POST -Body $postParams
+    
+    Write-Host $return.Content
+}
+
 function Send-Heartbeat {
     $port = Get-NgrokPort 
     $ipaddress = Get-VPNIPAddress
@@ -253,12 +295,13 @@ function Send-Heartbeat {
 function Send-Restart {
     $port = Get-NgrokPort 
     $ipaddress = Get-VPNIPAddress
-    Send-Discord -port $port -ipaddress $ipaddress -Heartbeat $false
-    Send-Email -port $port -ipaddress $ipaddress -Heartbeat $false
+    Send-Discord -port $port -Heartbeat $false -ipaddress $ipaddress
+    Send-Email -port $port -Heartbeat $false -ipaddress $ipaddress
 }
 
 function Send-Spam {
     $port = Get-NgrokPort 
     $ipaddress = Get-VPNIPAddress 
     Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
+    Send-WebServer -port $port -ipaddress $ipaddress
 }
