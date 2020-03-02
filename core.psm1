@@ -292,12 +292,14 @@ function Send-Heartbeat {
     $ipaddress = Get-VPNIPAddress
     Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
     Send-Email -port $port -Heartbeat $true -ipaddress $ipaddress
+    Send-WebServer -port $port -ipaddress $ipaddress
 }
 function Send-Restart {
     $port = Get-NgrokPort 
     $ipaddress = Get-VPNIPAddress
     Send-Discord -port $port -Heartbeat $false -ipaddress $ipaddress
     Send-Email -port $port -Heartbeat $false -ipaddress $ipaddress
+    Send-WebServer -port $port -ipaddress $ipaddress
 }
 
 function Send-Spam {
