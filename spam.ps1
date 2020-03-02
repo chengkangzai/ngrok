@@ -6,7 +6,7 @@ Write-Host "Setting Location to $dir"
 Set-Location $dir
 
 Import-Module ".\core.psm1" -DisableNameChecking
-
+Clear-cache
 function StartNgrok {
     $process = (Get-Process -Name ngrok -ErrorAction SilentlyContinue).Count
     if ($process -eq 0) {

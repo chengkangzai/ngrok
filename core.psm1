@@ -1,5 +1,8 @@
 $pcname = HOSTNAME.EXE
 $pcname = $pcname.ToUpper()
+#Setting Working directory 
+Set-Location "C:\ngrok"
+$config = Get-Content ".\setup.json" | ConvertFrom-Json
 
 function Send-Email {
     [CmdletBinding()]
@@ -28,7 +31,7 @@ function Send-Email {
     }
     Write-Host "--------------------- Send Email ------------------------------"
     Write-Host "The type of notify is $heading"
-    $config = Get-Content .\setup.json | ConvertFrom-Json
+    
     Set-Location $config.dirPath
 
     $username = $config.From
@@ -181,7 +184,7 @@ function Send-Discord {
         $Heartbeatinfo = "Restart" 
     }
     Write-Host "Current Type of notify : $Heartbeatinfo "
-    $config = Get-Content .\setup.json | ConvertFrom-Json
+
     $DiscordUrl = $config.discordWebHookUrl 
     
     if ($ipaddress -eq "") {
@@ -248,11 +251,9 @@ function Get-NgrokPort {
 function Send-WebServer {
     [CmdletBinding()]
     param (
-        #What is the tunnel port ?
         [Parameter()]
         [string]
         $port,
-        #What is the IP address in the VPN
         [Parameter(Mandatory = $false)]
         [string]
         $ipaddress
@@ -280,8 +281,8 @@ function Send-WebServer {
             pcName= $pcname;
         }
     }
-    
-    $return = Invoke-WebRequest -Uri http://chengkang.synology.me/test/ngrok/receiver.php -Method POST -Body $postParams
+
+    $return = Invoke-WebRequest -Uri $config.webServerUrl -Method POST -Body $postParams
     
     Write-Host $return.Content
 }
