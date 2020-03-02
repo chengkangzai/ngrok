@@ -235,7 +235,7 @@ function Get-NgrokPort {
             $stat = $false
             return $port 
         }
-        elseif ($port -like "*.ngrok" -and $port -like "http*") {
+        elseif ($port -like "*.ngrok*" -and $port -like "http*") {
             $port = $port[0]
             Write-Host "Hey! Got cha cover! We got the http tunnel already !"
             Write-Host "The ngrok port : $port "
@@ -259,9 +259,9 @@ function Send-WebServer {
         $ipaddress
     )
     Write-Host "----------------Sending to Web Server-------------------------"
-    if ($port -like "tcp*") {
+    if ($port -like "*tcp*") {
         $mode = "tcp";
-    }elseif($port -like "http*"){
+    }elseif($port -like "*http*"){
         $mode ="http";
     }
 
