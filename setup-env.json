@@ -1,0 +1,10 @@
+{
+    "From": "someone@email.com",
+    "To": "someone@email.com",
+    "SMTPServer": "smtp.office365.com",
+    "SMTPPort": 587,
+    "dirPath": "C:\\ngrok\\",
+    "discordWebHookUrl": "https://discordapp.com/api/webhooks/{guildUrl}/{Channel}",
+    "webServerUrl": "{sthAPI}",
+    "spamTimeInSecond": 600
+}
