@@ -210,43 +210,6 @@ function Send-Discord {
     }   
     
 }
-function Clear-cache {
-    Remove-Variable * -ea SilentlyContinue
-    Remove-Module *
-    $error.Clear()
-    Clear-Host
-}
-
-function Get-VPNIPAddress {
-    #Getting VPN IP Address 
-    $ip = (Get-NetIPAddress -IPAddress "10.0.0*").IPAddress 
-    return $ip
-}
-function Get-NgrokPort {
-    $stat = $true
-    while ($stat) {
-        Write-Host "------------ Get Ngrok Port -----------------"
-        Write-Host "Finding the ngrok port"
-        $tunnel = Invoke-WebRequest -Uri "http://localhost:4040/api/tunnels" -UseBasicParsing | ConvertFrom-Json
-        $port = $tunnel[0].tunnels.public_url
-        if ($port -like "*.ngrok*" -and $port -like "tcp*") {
-            Write-Host "Hey! Got cha cover! We got the tcp tunnel already !"
-            Write-Host "The ngrok port : $port "
-            $stat = $false
-            return $port 
-        }
-        elseif ($port -like "*.ngrok*" -and $port -like "http*") {
-            $port = $port[0]
-            Write-Host "Hey! Got cha cover! We got the http tunnel already !"
-            Write-Host "The ngrok port : $port "
-            $stat = $false
-            return $port
-        }
-        else {
-            Start-Sleep 10
-        }
-    }    
-}
 
 function Send-WebServer {
     [CmdletBinding()]
@@ -286,6 +249,39 @@ function Send-WebServer {
     
     Write-Host $return.Content
 }
+
+function Clear-cache {
+    Remove-Variable * -ea SilentlyContinue
+    Remove-Module *
+    $error.Clear()
+    Clear-Host
+}
+
+function Get-VPNIPAddress {
+    #Getting VPN IP Address 
+    $ip = (Get-NetIPAddress -IPAddress "10.0.0*").IPAddress 
+    return $ip
+}
+function Get-NgrokPort {
+    $stat = $true
+    while ($stat) {
+        Write-Host "------------ Get Ngrok Port -----------------"
+        Write-Host "Finding the ngrok port"
+        $tunnel = Invoke-WebRequest -Uri "http://localhost:4040/api/tunnels" -UseBasicParsing | ConvertFrom-Json
+        $port = $tunnel[0].tunnels.public_url
+        $Proto = $tunnel[0].tunnels.Proto
+        if ($port -like "*.ngrok*" ) {
+            Write-Host "Hey! Got cha cover! We got the $Proto tunnel already !"
+            Write-Host "The ngrok port : $port "
+            $stat = $false
+            return $port 
+        }
+        else {
+            Start-Sleep 10
+        }
+    }    
+}
+
 
 function Send-Heartbeat {
     $port = Get-NgrokPort 
