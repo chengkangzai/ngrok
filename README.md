@@ -1,6 +1,10 @@
 # NGROK secure introspectable tunnels to localhost
 
-### How to Install
+## Prerequisition
+
+* Install your NGROK here https://ngrok.com/
+
+## How to Install
   1. Open cmd, change directory to C:\ 
   2. run 
   ````
@@ -13,7 +17,7 @@
   4. Change the setting under setup.json 
   5. Run the "Password Update" for creating email credential 
 
-### Functionalities 
+## Functionalities 
   1. Send Email 
   2. Send to Discord Webhook
   3. Get Your VPN address if you are using one
