@@ -245,7 +245,7 @@ function Send-WebServer {
         }
     }
 
-    $return = Invoke-WebRequest -Uri $config.webServerUrl -Method POST -Body $postParams
+    $return = Invoke-WebRequest -Uri $config.webServerUrl -Method POST -Body $postParams -UseBasicParsing
     
     Write-Host $return.Content
 }
