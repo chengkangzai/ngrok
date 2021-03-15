@@ -7,11 +7,11 @@
 ## How to Install
   1. Open cmd, change directory to C:\ 
   2. run 
-  ````
+  ```sh
   git clone https://github.com/chengkangzai/ngrok
-  ````
-  3. Configure auth token from https://dashboard.ngrok.com/auth
   ```
+  3. Configure auth token from https://dashboard.ngrok.com/auth
+  ```sh
   ngrok auth <your auth token>
   ```
   4. Change the setting under setup.json 
