@@ -12,7 +12,7 @@
   ```
   3. Configure auth token from https://dashboard.ngrok.com/auth
   ```sh
-  ngrok auth <your auth token>
+  ngrok authtoken <your auth token>
   ```
   4. Change the setting under setup.json 
   5. Run the "Password Update" for creating email credential 
