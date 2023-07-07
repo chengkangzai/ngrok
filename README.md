@@ -15,7 +15,7 @@
   ngrok authtoken <your auth token>
   ```
   4. Change the setting under setup.json 
-  5. Run the "Password Update" for creating email credential 
+  5. Run the "updateEmailPassword" for creating email credential 
 
 ## Functionalities 
   1. Send Email 
