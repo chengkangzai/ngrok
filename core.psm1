@@ -15,10 +15,6 @@ function Send-Email {
         [Parameter(Mandatory = $true)]
         [string]
         $port,
-        #What is the IP address in the VPN
-        [Parameter(Mandatory = $false)]
-        [string]
-        $ipaddress
     )
     $currentTimestamp = Get-Date -Format g
     if ($Heartbeat -eq $true) {
@@ -170,10 +166,6 @@ function Send-Discord {
         [Parameter()]
         [string]
         $port,
-        #What is the IP address in the VPN
-        [Parameter(Mandatory = $false)]
-        [string]
-        $ipaddress
     )
     Write-Host "---------------Discord------------------------------"
     Write-Host "initialize Discord Webhook"
@@ -186,17 +178,9 @@ function Send-Discord {
     Write-Host "Current Type of notify : $Heartbeatinfo "
 
     $DiscordUrl = $config.discordWebHookUrl 
-    
-    if ($ipaddress -eq "") {
-        $DiscordBody = @{
-            "content" = "[ $pcname | $Heartbeatinfo ] $port"
-        }    
-    }
-    else {
-        $DiscordBody = @{
-            "content" = "[ $pcname | $Heartbeatinfo ] $port [ IP ] $ipaddress"
-        }  
-    }
+    $DiscordBody = @{
+        "content" = "[ $pcname | $Heartbeatinfo ] $port"
+    }    
     
     $message = $DiscordBody.content
     Write-Host "Sending message $message"
@@ -231,23 +215,11 @@ function Send-WebServer {
 
 
     $email = $config.To
-    if ($ipaddress -eq $null ) {
-        $postParams = @{
-            ngrok    = $port;
-            vpnIP    = 'NULL';
-            protocol = $mode;
-            pcName   = $pcname;
-            email    = $email;
-        }
-    }
-    else {
-        $postParams = @{
-            ngrok    = $port;
-            vpnIP    = $ipaddress;
-            protocol = $mode;
-            pcName   = $pcname;
-            email    = $email;
-        }
+    $postParams = @{
+        ngrok    = $port;
+        protocol = $mode;
+        pcName   = $pcname;
+        email    = $email;
     }
 
     $return = Invoke-WebRequest -Uri $config.webServerUrl -Method POST -Body $postParams -UseBasicParsing
@@ -262,11 +234,6 @@ function Clear-cache {
     Clear-Host
 }
 
-function Get-VPNIPAddress {
-    #Getting VPN IP Address 
-    $ip = (Get-NetIPAddress -IPAddress "10.0.0*").IPAddress 
-    return $ip
-}
 function Get-NgrokPort {
     $stat = $true
     while ($stat) {
@@ -290,22 +257,19 @@ function Get-NgrokPort {
 
 function Send-Heartbeat {
     $port = Get-NgrokPort 
-    $ipaddress = Get-VPNIPAddress
-    Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
-    Send-Email -port $port -Heartbeat $true -ipaddress $ipaddress
+    Send-Discord -port $port -Heartbeat $true
+    Send-Email -port $port -Heartbeat $true
     Send-WebServer -port $port -ipaddress $ipaddress
 }
 function Send-Restart {
     $port = Get-NgrokPort 
-    $ipaddress = Get-VPNIPAddress
-    Send-Discord -port $port -Heartbeat $false -ipaddress $ipaddress
-    Send-Email -port $port -Heartbeat $false -ipaddress $ipaddress
+    Send-Discord -port $port -Heartbeat $false
+    Send-Email -port $port -Heartbeat $false
     Send-WebServer -port $port -ipaddress $ipaddress
 }
 
 function Send-Spam {
     $port = Get-NgrokPort 
-    $ipaddress = Get-VPNIPAddress 
-    Send-Discord -port $port -Heartbeat $true -ipaddress $ipaddress
-    Send-WebServer -port $port -ipaddress $ipaddress
+    Send-Discord -port $port -Heartbeat $true
+    Send-WebServer -port $port
 }
